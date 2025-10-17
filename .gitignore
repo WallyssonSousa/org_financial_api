@@ -1,0 +1,23 @@
+# Ignora a pasta node_modules (dependências do projeto)
+node_modules/
+
+# Ignora arquivos de variáveis de ambiente
+.env
+.env.*  # Se você usar arquivos como .env.development, .env.production etc.
+
+# Outros comuns que podem ser úteis:
+dist/
+build/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Diretórios de cache
+.cache/
+.next/
+out/
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
