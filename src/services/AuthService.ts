@@ -18,5 +18,12 @@ export default class AuthService {
 
     static async login(email: string, senha: string){
         const user = await prisma.user.findUnique({where: {email}});
+        if(!user) throw new Error("Credenciais inválidas.");
+
+        const match = await bcrypt.compare(senha, user.senha);
+        if(!match) throw new Error("Credenciais inválidas.");
+
+        const token = generateToken({userId: user.id});
+        return { user: {id: user.id, nome: user.nome, email: user.email}, token };
     }
 }
