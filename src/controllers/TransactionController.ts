@@ -14,22 +14,14 @@ export default class TransactionController {
 
   static async list(req: AuthRequest, res: Response) {
     try {
-      const result = await TransactionService.listByUser(req.userId!);
+      const { filtro } = req.query; // "semana" | "mes" | "tres-meses"
+      const result = await TransactionService.list(req.userId!, filtro as string);
       return res.json(result);
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
     }
   }
 
-  static async get(req: AuthRequest, res: Response) {
-    try {
-      const { id } = req.params;
-      const result = await TransactionService.getById(req.userId!, Number(id));
-      return res.json(result);
-    } catch (error: any) {
-      return res.status(400).json({ message: error.message });
-    }
-  }
 
   static async update(req: AuthRequest, res: Response) {
     try {
@@ -45,15 +37,6 @@ export default class TransactionController {
     try {
       const { id } = req.params;
       const result = await TransactionService.delete(req.userId!, Number(id));
-      return res.json(result);
-    } catch (error: any) {
-      return res.status(400).json({ message: error.message });
-    }
-  }
-
-  static async summary(req: AuthRequest, res: Response) {
-    try {
-      const result = await TransactionService.summary(req.userId!);
       return res.json(result);
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
