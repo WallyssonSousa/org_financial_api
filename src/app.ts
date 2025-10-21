@@ -15,7 +15,7 @@ app.use(express.json());
 
 app.use("/auth", authRoutes);
 app.use("/transactions", transactionRoutes);
-app.use("/category", categoryRoutes)
+app.use("/categories", categoryRoutes)
 app.use("/account", accountRoutes)
 
 export default app;
