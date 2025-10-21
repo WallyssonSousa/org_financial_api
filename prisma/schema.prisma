@@ -8,23 +8,61 @@ generator client {
 }
 
 model User {
-  id          Int           @id @default(autoincrement())
-  nome        String
-  email       String        @unique
-  senha       String
-  transacoes  Transaction[]
-  createdAt   DateTime      @default(now())
+  id         Int           @id @default(autoincrement())
+  nome       String
+  email      String        @unique
+  senha      String
+  transacoes Transaction[] @relation("UsuarioTransacoes")
+  categorias Category[]    @relation("UsuarioCategorias")
+  contas     Account[]     @relation("UsuarioContas") 
+  createdAt  DateTime      @default(now())
 }
 
 model Transaction {
-  id              Int       @id @default(autoincrement())
+  id              Int      @id @default(autoincrement())
   descricao       String
   valor           Float
-  tipo            String    // entrada | saida
-  metodoPagamento String
-  categoria       String
-  data            DateTime  @default(now())
-  fixa            Boolean   @default(false)
-  usuarioId       Int
-  usuario         User      @relation(fields: [usuarioId], references: [id])
+  tipo            String // entrada | saida
+  metodoPagamento String  // debito | credito
+  data            DateTime @default(now())
+  fixa            Boolean  @default(false)
+
+  parcelas        Int?      // número total de parcelas
+  parcelaAtual    Int?      // número da parcela atual
+  dataFatura      DateTime? // data de vencimento da fatura
+  transacaoPaiId  Int?      // referência à transação original (para crédito parcelado)
+  transacaoPai    Transaction? @relation("ParcelasCredito", fields: [transacaoPaiId], references: [id])
+  parcelasFilhas  Transaction[] @relation("ParcelasCredito")
+
+  usuarioId Int
+  usuario   User @relation("UsuarioTransacoes", fields: [usuarioId], references: [id])
+
+  categoriaId Int?
+  categoria   Category? @relation("CategoriaTransacoes", fields: [categoriaId], references: [id])
+
+  contaId Int?
+  conta   Account? @relation("ContaTransacoes", fields: [contaId], references: [id])
+}
+
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  userId Int
+  user   User @relation("UsuarioCategorias", fields: [userId], references: [id])
+
+  transactions Transaction[] @relation("CategoriaTransacoes")
+}
+
+model Account {
+  id          Int      @id @default(autoincrement())
+  name        String
+  balance     Float    @default(0)
+  description String?
+  createdAt   DateTime @default(now())
+
+  userId Int
+  user   User @relation("UsuarioContas", fields: [userId], references: [id])
+  transactions Transaction[] @relation("ContaTransacoes") 
 }
